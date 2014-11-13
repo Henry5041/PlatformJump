@@ -19,7 +19,7 @@ public class PlatformJumpCommandExecutor implements CommandExecutor {
 		if (args.length == 0) {
 			return false;
 		}
-		switch (args[0]) {
+		switch (args[0].toLowerCase()) {
 		case "reload":
 			if (sender.hasPermission("platform.command.reload")) {
 				plugin.reloadConfig();
