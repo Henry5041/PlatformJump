@@ -3,6 +3,8 @@ package org.greensky.platformjump;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,6 +18,13 @@ public class PlatformJump extends JavaPlugin  {
 	    this.saveDefaultConfig();
 		this.getCommand("platform").setExecutor(new PlatformJumpCommandExecutor(this));
 		getServer().getPluginManager().registerEvents(new PlatformJumpListener(this), this);
+	}
+	@Override
+	public void onDisable(){
+		for (Player eachPlayer : Bukkit.getServer()
+				.getOnlinePlayers()) {
+			lastPlatformMap.get(eachPlayer.getName()).setType(Material.AIR);
+		}
 	}
 	public boolean getPluginEnabled(String playerName){
 		if (!pluginEnabled.containsKey(playerName)){
