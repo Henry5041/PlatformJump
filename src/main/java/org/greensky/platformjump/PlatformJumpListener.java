@@ -78,9 +78,9 @@ public class PlatformJumpListener implements Listener {
 							platform.setDebugOn(isDebugOn);
 							if (platform.createPlatform()) {
 								// Play particle to all the players
-								for (Player allPlayer : Bukkit.getServer()
+								for (Player eachPlayer : Bukkit.getServer()
 										.getOnlinePlayers()) {
-									allPlayer.playEffect(player.getLocation(),
+									eachPlayer.playEffect(player.getLocation(),
 											Effect.ENDER_SIGNAL, null);
 								}
 								float exhaustionAdd = (float) plugin
