@@ -1,0 +1,10 @@
+platform:
+  max-height: 256
+  # Set the max height where platforms can be created.
+jump-effect:
+  time: 200
+  # Set the time of the effect of jump.
+  level: 4
+  # Set the level of the effect of jump.
+food-cost: 1
+debug: false
