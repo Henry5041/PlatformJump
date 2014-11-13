@@ -1,0 +1,43 @@
+name: PlatformJump
+main: org.greensky.platformjump.PlatformJump
+version: 0.0.6-SNAPSHOT
+author: Henry5041
+permissions:
+    platform.*:
+        description: Allows you to use all platform feature
+        default: op
+        children:
+          platform.admin: true
+          platform.use: true
+    platform.use:
+        description: The basic feature of platform
+        default: false
+        children:
+          platform.create: true
+          platform.command.toggle: true
+    platform.admin:
+        description: The feature for administrators
+        default: op
+        children:
+          platform.command.*: true
+    platform.create:
+        description: Allows you to create platform
+        default: false
+    platform.command.*:
+        description: Allows you to use command
+        default: op
+        children:
+          platform.command.toggle: true
+          platform.command.reload: true
+    platform.command.toggle:
+        description: Allows you to use command toggle
+        default: true
+    platform.command.reload:
+        description: Allows you to use command reload
+        default: op
+commands:
+   platform:
+      description: This is the main command of PlatformJump.
+      usage: |
+        /<command> reload - reloads the configuration
+        /<command> toggle  - Allows you to toggle enabled of platform
