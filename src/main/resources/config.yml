@@ -1,4 +1,5 @@
 platform:
+  block-id: 20
   max-height: 256
   # Set the max height where platforms can be created.
 jump-effect:
@@ -6,5 +7,18 @@ jump-effect:
   # Set the time of the effect of jump.
   level: 4
   # Set the level of the effect of jump.
-food-cost: 1
+exhaustion: 1
+# Add exhaustion of hunger when creating platforms
 debug: false
+metrics: true
+# Set true if agree to send data to mcstats.org
+message:
+  no-permission: No permission
+  too-high: can't create platform in this height
+  reloaded: PlatformJump configuration reloaded
+  toggle-on: PlatformJump enabled
+  toggle-off: PlatformJump disabled
+  removed: Last platform removed
+  not-available: is not currently available
+  not-player: You are not a player
+version: 0.2.0

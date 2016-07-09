@@ -1,9 +1,7 @@
 package org.greensky.platformjump;
 
 import java.util.Map;
-
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -11,66 +9,61 @@ public class Platform {
 	private Map<String, Block> lastPlatformMap;
 	private boolean isDebugOn;
 	private Player player;
-	private int platformType;
+	private org.bukkit.Material platformMaterial;
 
 	public Platform(Player player) {
 		this.player = player;
+		this.lastPlatformMap = null;
 		setDebugOn(false);
+		this.platformMaterial = org.bukkit.Material.GLASS;
 	}
 
 	public boolean createPlatform() {
-		String playerName = player.getName();
-		if (!(lastPlatformMap == null)) {
-			if (lastPlatformMap.containsKey(playerName)) {
-				// Sets location for last platform.
-				Block lastPlatform = lastPlatformMap.get(playerName);
-				if (lastPlatform.getType() == Material.GLASS) {
-					// Removes the platform.
-					lastPlatform.setType(Material.AIR);
-					lastPlatformMap.remove(playerName);
-					if (isDebugOn) {
-						player.sendMessage("Last platform removed");
-					}
+		String playerName = this.player.getName();
+		if ((this.lastPlatformMap != null) && (this.lastPlatformMap.containsKey(playerName))) {
+			Block lastPlatform = (Block) this.lastPlatformMap.get(playerName);
+			if (lastPlatform.getType() == this.platformMaterial) {
+				lastPlatform.setType(org.bukkit.Material.AIR);
+				// Remove the last platform block
+				this.lastPlatformMap.remove(playerName);
+				if (this.isDebugOn) {
+					this.player.sendMessage("Last platform removed");
 				}
-
 			}
 		}
 
-		// Get the player's location.
-		Location playerLocation = player.getLocation();
-		// Sets location to one under where it used to be. Note
-		// that
-		// doesn't change the player's position.
+		Location playerLocation = this.player.getLocation();
+		// Sets location to one under where it used to be, without changing the
+		// player's own position
 		Location platformLocation = playerLocation.clone();
-		platformLocation.setY(platformLocation.getY() - 1);
-		// Gets the block at the new location.
+		platformLocation.setY(platformLocation.getY() - 1.0D);
+
 		Block platform = platformLocation.getBlock();
 
-		if (platform.getType() == Material.AIR) {
-			// Sets the block to glass.
-			platform.setType(Material.GLASS);
-			if (!(lastPlatformMap == null)) {
-				lastPlatformMap.put(playerName, platform);
+		if (platform.getType() == org.bukkit.Material.AIR) {
+			platform.setType(this.platformMaterial);
+			if (this.lastPlatformMap != null) {
+				this.lastPlatformMap.put(playerName, platform);
+			}
 
+			if (this.isDebugOn) {
+				this.player.sendMessage("Platform created");
 			}
-			if (isDebugOn) {
-				player.sendMessage("Platform created");
+			platformLocation.setY((int) platformLocation.getY());
+			// unstuck the player
+			this.player.teleport(playerLocation);
+			if (this.isDebugOn) {
+				this.player.sendMessage("Teleported upon the platform");
 			}
-			platformLocation.setY((int) (platformLocation.getY()));
-			// Teleport the player upon the platform
-			player.teleport(playerLocation);
-			if (isDebugOn) {
-				player.sendMessage("Teleported upon the platform");
-			}
-			// Return true if platform created
+
 			return true;
 		}
-		// Return false if platform isn't created
+
 		return false;
 	}
 
 	public Map<String, Block> getLastPlatformMap() {
-		return lastPlatformMap;
+		return this.lastPlatformMap;
 	}
 
 	public void setLastPlatformMap(Map<String, Block> lastPlatformMap) {
@@ -78,19 +71,24 @@ public class Platform {
 	}
 
 	public boolean isDebugOn() {
-		return isDebugOn;
+		return this.isDebugOn;
 	}
 
 	public void setDebugOn(boolean isDebugOn) {
 		this.isDebugOn = isDebugOn;
 	}
 
-	public int getPlatformType() {
-		return platformType;
+	public org.bukkit.Material getPlatformMaterial() {
+		return this.platformMaterial;
 	}
 
-	public void setPlatformType(int platformType) {
-		this.platformType = platformType;
+	public void setPlatformMaterial(org.bukkit.Material platformType) {
+		this.platformMaterial = platformType;
 	}
-
 }
+
+/*
+ * Location: C:\Users\Henry
+ * Hu\Documents\plugins\PlatformJump-0.2.0.jar!\org\greensky\platformjump\
+ * Platform.class Java compiler version: 7 (51.0) JD-Core Version: 0.7.1
+ */

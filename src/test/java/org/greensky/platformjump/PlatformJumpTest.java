@@ -13,7 +13,7 @@ public class PlatformJumpTest {
 
 	@Test
 	public void testOnEnable() {
-		
+
 	}
 
 }

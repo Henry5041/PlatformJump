@@ -2,8 +2,7 @@ package org.greensky.platformjump;
 
 import java.util.Map;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -11,114 +10,146 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 public class PlatformJumpListener implements Listener {
 	private Map<String, Block> lastPlatformMap;
 	private final PlatformJump plugin;
-	private boolean isDebugOn;
+	private Configuration configuration;
 
 	public PlatformJumpListener(PlatformJump plugin) {
-		this.plugin = plugin; // Store the plug-in in situations where you need
-		// it.
-		lastPlatformMap = plugin.getLastPlatformMap();
-		isDebugOn = plugin.getConfig().getBoolean("debug");
+		this.plugin = plugin;
+
+		this.lastPlatformMap = plugin.getLastPlatformMap();
+		this.configuration = plugin.getConfiguration();
+		if (this.configuration.isDebugOn()) {
+			plugin.getLogger().info("Listener Platform Material: " + this.configuration.getPlatformMaterial());
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
-	public void onBlockDispenseEvent(BlockBreakEvent event) {
-		isDebugOn = plugin.getConfig().getBoolean("debug");
-		if (event.getBlock().getType() == Material.GLASS) {
-			if (lastPlatformMap.containsValue(event.getBlock())) {
-				// Cancel the break event to avoid drop
-				event.setCancelled(true);
+	public void onBlockBreakEvent(BlockBreakEvent event) {
+		if ((event.getBlock().getType() == this.configuration.getPlatformMaterial())
+				&& (this.lastPlatformMap.containsValue(event.getBlock()))) {
+			event.setCancelled(true);
 
-				event.getBlock().setType(Material.AIR);
+			event.getBlock().setType(Material.AIR);
 
-				if (isDebugOn) {
-					event.getPlayer().sendMessage("Drop cleared");
-				}
+			if (this.configuration.isDebugOn()) {
+				event.getPlayer().sendMessage("Drop cleared");
 			}
-
-		}
-
-	}
-
-	@EventHandler
-	public void onPlayerQuitEvent(PlayerQuitEvent event) {
-		Block lastPlatform = lastPlatformMap.get(event.getPlayer().getName());
-		// Check the Material of the platform block
-		if (lastPlatform.getType() == Material.GLASS) {
-			lastPlatform.setType(Material.AIR);
-			lastPlatformMap.remove(event.getPlayer().getName());
 		}
 	}
 
 	@EventHandler
 	public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
-		isDebugOn = plugin.getConfig().getBoolean("debug");
 		Player player = event.getPlayer();
-		// Check if player has permission.
+
 		String playerName = player.getName();
-		if (plugin.getPluginEnabled(playerName)) {
-			// Check if player is sneaking
+		if (this.plugin.getPluginEnabled(playerName)) {
 			if (event.isSneaking()) {
-				// Check if player is flying
 				if (!player.isFlying()) {
-					// Check if player has permission
 					if (player.hasPermission("platform.create")) {
-						int platformMaxHeight = plugin.getConfig().getInt(
-								"platform.max-height");
-						if (player.getLocation().getY() - 1 <= platformMaxHeight) {
+						int platformMaxHeight = this.plugin.getConfig().getInt("platform.max-height");
+						if (player.getLocation().getY() - 1.0D <= platformMaxHeight) {
 							Platform platform = new Platform(player);
-							platform.setLastPlatformMap(lastPlatformMap);
-							platform.setDebugOn(isDebugOn);
+							platform.setLastPlatformMap(this.lastPlatformMap);
+							platform.setPlatformMaterial(this.configuration.getPlatformMaterial());
+							platform.setDebugOn(this.configuration.isDebugOn());
 							if (platform.createPlatform()) {
-								// Play particle to all the players
-								for (Player eachPlayer : Bukkit.getServer()
-										.getOnlinePlayers()) {
-									eachPlayer.playEffect(player.getLocation(),
-											Effect.ENDER_SIGNAL, null);
+								for (Player eachPlayer : org.bukkit.Bukkit.getServer().getOnlinePlayers()) {
+									eachPlayer.playEffect(player.getLocation(), org.bukkit.Effect.ENDER_SIGNAL, null);
 								}
-								float exhaustionAdd = (float) plugin
-										.getConfig().getDouble("food-cost");
-								player.setExhaustion(player.getExhaustion()
-										+ exhaustionAdd);
-								if (isDebugOn) {
-									player.sendMessage("Current exhaustion: "
-											+ player.getExhaustion());
+								float exhaustionAdd = (float) this.plugin.getConfig().getDouble("exhaustion");
+								player.setExhaustion(player.getExhaustion() + exhaustionAdd);
+								if (this.configuration.isDebugOn()) {
+									player.sendMessage("Current exhaustion: " + player.getExhaustion());
 								}
+							} else {
+								this.lastPlatformMap.remove(playerName);
 							}
-
 						} else {
-							player.sendMessage("can't create platform in this height");
-
+							player.sendMessage(this.plugin.getConfig().getString("message.too-high"));
 						}
 
-						int jumpEffectTime = plugin.getConfig().getInt(
-								"jump-effect.time");
-						if (isDebugOn) {
+						int jumpEffectTime = this.plugin.getConfig().getInt("jump-effect.time");
+						if (this.configuration.isDebugOn()) {
 							player.sendMessage("time:" + jumpEffectTime);
 						}
-						int jumpEffectLevel = plugin.getConfig().getInt(
-								"jump-effect.level");
-						if (isDebugOn) {
+						int jumpEffectLevel = this.plugin.getConfig().getInt("jump-effect.level");
+						if (this.configuration.isDebugOn()) {
 							player.sendMessage("level:" + jumpEffectLevel);
 						}
-						PotionEffect jumpEffect = new PotionEffect(
-								PotionEffectType.JUMP, jumpEffectTime,
-								jumpEffectLevel);
-						// add the jump effect to player
-						player.addPotionEffect(jumpEffect, true);
+						PotionEffect jumpEffect = new PotionEffect(org.bukkit.potion.PotionEffectType.JUMP,
+								jumpEffectTime, jumpEffectLevel);
 
+						player.addPotionEffect(jumpEffect, true);
 					}
 				}
 			}
 		}
-
 	}
 
+	@EventHandler
+	public void onEntityDamageEvent(EntityDamageEvent event) {
+		if (event.getCause() == org.bukkit.event.entity.EntityDamageEvent.DamageCause.FALL) {
+			org.bukkit.entity.Entity entity = event.getEntity();
+			if ((entity instanceof Player)) {
+				Player player = (Player) entity;
+				if (this.lastPlatformMap.containsKey(player.getName())) {
+					Location playerLocation = player.getLocation();
+
+					playerLocation.setY(playerLocation.getY() - 1.0D);
+					if (this.configuration.isDebugOn()) {
+						player.sendMessage("The height of one block under you is " + playerLocation.getBlock().getY());
+						player.sendMessage("The height of your last platform is "
+								+ ((Block) this.lastPlatformMap.get(player.getName())).getY());
+					}
+
+					if (playerLocation.getBlock().equals(this.lastPlatformMap.get(player.getName()))) {
+						event.setCancelled(true);
+					}
+				}
+			}
+		}
+	}
+
+	@EventHandler
+	public void onBlockPistonExtendEvent(BlockPistonExtendEvent event) {
+		for (Block eachBlock : event.getBlocks()) {
+			if ((eachBlock.getType() == this.configuration.getPlatformMaterial())
+					&& (this.lastPlatformMap.containsValue(eachBlock))) {
+				eachBlock.setType(Material.AIR);
+				if (this.configuration.isDebugOn()) {
+					this.plugin.getLogger().info("Piston extend: " + eachBlock.getType());
+				}
+			}
+		}
+	}
+
+	@EventHandler
+	public void onBlockPistonRetractEvent(BlockPistonRetractEvent event) {
+		@SuppressWarnings("deprecation")
+		Block platform = event.getRetractLocation().getBlock();
+		if (platform.getType() == this.configuration.getPlatformMaterial()) {
+			if (this.lastPlatformMap.containsValue(platform)) {
+				event.setCancelled(true);
+				platform.setType(Material.AIR);
+				if (this.configuration.isDebugOn()) {
+					this.plugin.getLogger().info("Piston retract: " + platform.getType());
+				}
+			}
+		}
+	}
 }
+
+/*
+ * Location: C:\Users\Henry
+ * Hu\Documents\plugins\PlatformJump-0.2.0.jar!\org\greensky\platformjump\
+ * PlatformJumpListener.class Java compiler version: 7 (51.0) JD-Core Version:
+ * 0.7.1
+ */
