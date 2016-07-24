@@ -1,6 +1,5 @@
 package org.greensky.platformjump;
 
-import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -14,6 +13,7 @@ public class PlatformJumpCommandExecutor implements org.bukkit.command.CommandEx
 		this.configuration = plugin.getConfiguration();
 	}
 
+	@Override
 	public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label, String[] args) {
 		if (args.length == 0)
 			return false;
@@ -24,8 +24,7 @@ public class PlatformJumpCommandExecutor implements org.bukkit.command.CommandEx
 				for (Player eachPlayer : org.bukkit.Bukkit.getServer().getOnlinePlayers()) {
 
 					if (this.plugin.getLastPlatformMap().containsKey(eachPlayer.getName())) {
-						((Block) this.plugin.getLastPlatformMap().get(eachPlayer.getName()))
-								.setType(org.bukkit.Material.AIR);
+						this.plugin.getLastPlatformMap().get(eachPlayer.getName()).setType(org.bukkit.Material.AIR);
 						this.plugin.getLastPlatformMap().remove(eachPlayer.getName());
 					}
 				}
@@ -45,8 +44,7 @@ public class PlatformJumpCommandExecutor implements org.bukkit.command.CommandEx
 						Player player = (Player) sender;
 
 						if (this.plugin.getLastPlatformMap().containsKey(player.getName())) {
-							((Block) this.plugin.getLastPlatformMap().get(player.getName()))
-									.setType(org.bukkit.Material.AIR);
+							this.plugin.getLastPlatformMap().get(player.getName()).setType(org.bukkit.Material.AIR);
 							this.plugin.getLastPlatformMap().remove(player.getName());
 							sender.sendMessage(this.plugin.getConfig().getString("message.removed"));
 						}
@@ -67,7 +65,7 @@ public class PlatformJumpCommandExecutor implements org.bukkit.command.CommandEx
 					return true;
 				}
 				if (this.plugin.getLastPlatformMap().containsKey(target.getName())) {
-					((Block) this.plugin.getLastPlatformMap().get(target.getName())).setType(org.bukkit.Material.AIR);
+					this.plugin.getLastPlatformMap().get(target.getName()).setType(org.bukkit.Material.AIR);
 					this.plugin.getLastPlatformMap().remove(target.getName());
 					sender.sendMessage(this.plugin.getConfig().getString("message.removed"));
 				}
@@ -91,10 +89,3 @@ public class PlatformJumpCommandExecutor implements org.bukkit.command.CommandEx
 		return false;
 	}
 }
-
-/*
- * Location: C:\Users\Henry
- * Hu\Documents\plugins\PlatformJump-0.2.0.jar!\org\greensky\platformjump\
- * PlatformJumpCommandExecutor.class Java compiler version: 7 (51.0) JD-Core
- * Version: 0.7.1
- */

@@ -14,6 +14,7 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffect;
 
 public class PlatformJumpListener implements Listener {
@@ -46,79 +47,6 @@ public class PlatformJumpListener implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
-		Player player = event.getPlayer();
-
-		String playerName = player.getName();
-		if (this.plugin.getPluginEnabled(playerName)) {
-			if (event.isSneaking()) {
-				if (!player.isFlying()) {
-					if (player.hasPermission("platform.create")) {
-						int platformMaxHeight = this.plugin.getConfig().getInt("platform.max-height");
-						if (player.getLocation().getY() - 1.0D <= platformMaxHeight) {
-							Platform platform = new Platform(player);
-							platform.setLastPlatformMap(this.lastPlatformMap);
-							platform.setPlatformMaterial(this.configuration.getPlatformMaterial());
-							platform.setDebugOn(this.configuration.isDebugOn());
-							if (platform.createPlatform()) {
-								for (Player eachPlayer : org.bukkit.Bukkit.getServer().getOnlinePlayers()) {
-									eachPlayer.playEffect(player.getLocation(), org.bukkit.Effect.ENDER_SIGNAL, null);
-								}
-								float exhaustionAdd = (float) this.plugin.getConfig().getDouble("exhaustion");
-								player.setExhaustion(player.getExhaustion() + exhaustionAdd);
-								if (this.configuration.isDebugOn()) {
-									player.sendMessage("Current exhaustion: " + player.getExhaustion());
-								}
-							} else {
-								this.lastPlatformMap.remove(playerName);
-							}
-						} else {
-							player.sendMessage(this.plugin.getConfig().getString("message.too-high"));
-						}
-
-						int jumpEffectTime = this.plugin.getConfig().getInt("jump-effect.time");
-						if (this.configuration.isDebugOn()) {
-							player.sendMessage("time:" + jumpEffectTime);
-						}
-						int jumpEffectLevel = this.plugin.getConfig().getInt("jump-effect.level");
-						if (this.configuration.isDebugOn()) {
-							player.sendMessage("level:" + jumpEffectLevel);
-						}
-						PotionEffect jumpEffect = new PotionEffect(org.bukkit.potion.PotionEffectType.JUMP,
-								jumpEffectTime, jumpEffectLevel);
-
-						player.addPotionEffect(jumpEffect, true);
-					}
-				}
-			}
-		}
-	}
-
-	@EventHandler
-	public void onEntityDamageEvent(EntityDamageEvent event) {
-		if (event.getCause() == org.bukkit.event.entity.EntityDamageEvent.DamageCause.FALL) {
-			org.bukkit.entity.Entity entity = event.getEntity();
-			if ((entity instanceof Player)) {
-				Player player = (Player) entity;
-				if (this.lastPlatformMap.containsKey(player.getName())) {
-					Location playerLocation = player.getLocation();
-
-					playerLocation.setY(playerLocation.getY() - 1.0D);
-					if (this.configuration.isDebugOn()) {
-						player.sendMessage("The height of one block under you is " + playerLocation.getBlock().getY());
-						player.sendMessage("The height of your last platform is "
-								+ ((Block) this.lastPlatformMap.get(player.getName())).getY());
-					}
-
-					if (playerLocation.getBlock().equals(this.lastPlatformMap.get(player.getName()))) {
-						event.setCancelled(true);
-					}
-				}
-			}
-		}
-	}
-
-	@EventHandler
 	public void onBlockPistonExtendEvent(BlockPistonExtendEvent event) {
 		for (Block eachBlock : event.getBlocks()) {
 			if ((eachBlock.getType() == this.configuration.getPlatformMaterial())
@@ -145,11 +73,94 @@ public class PlatformJumpListener implements Listener {
 			}
 		}
 	}
-}
 
-/*
- * Location: C:\Users\Henry
- * Hu\Documents\plugins\PlatformJump-0.2.0.jar!\org\greensky\platformjump\
- * PlatformJumpListener.class Java compiler version: 7 (51.0) JD-Core Version:
- * 0.7.1
- */
+	@EventHandler
+	public void onEntityDamageEvent(EntityDamageEvent event) {
+		if (event.getCause() == org.bukkit.event.entity.EntityDamageEvent.DamageCause.FALL) {
+			org.bukkit.entity.Entity entity = event.getEntity();
+			if ((entity instanceof Player)) {
+				Player player = (Player) entity;
+				if (this.lastPlatformMap.containsKey(player.getName())) {
+					Location playerLocation = player.getLocation();
+
+					playerLocation.setY(playerLocation.getY() - 1.0D);
+					if (this.configuration.isDebugOn()) {
+						player.sendMessage("The height of one block under you is " + playerLocation.getBlock().getY());
+						player.sendMessage("The height of your last platform is "
+								+ this.lastPlatformMap.get(player.getName()).getY());
+					}
+
+					if (playerLocation.getBlock().equals(this.lastPlatformMap.get(player.getName()))) {
+						event.setCancelled(true);
+					}
+				}
+			}
+		}
+	}
+
+	@EventHandler
+	public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
+		Player player = event.getPlayer();
+
+		String playerName = player.getName();
+
+		if (this.plugin.getPluginEnabled(playerName) && event.isSneaking() && !player.isFlying()) {
+
+			if (player.hasPermission("platform.create")) {
+				int platformMaxHeight = this.plugin.getConfig().getInt("platform.max-height");
+				if (player.getLocation().getY() - 1.0D <= platformMaxHeight) {
+					Platform platform = new Platform(player);
+					platform.setLastPlatformMap(this.lastPlatformMap);
+					platform.setPlatformMaterial(this.configuration.getPlatformMaterial());
+					platform.setDebugOn(this.configuration.isDebugOn());
+					if (platform.createPlatform()) {
+						player.getWorld().playEffect(player.getLocation(), org.bukkit.Effect.ENDER_SIGNAL, null);
+						float exhaustionAdd = (float) this.plugin.getConfig().getDouble("exhaustion");
+						player.setExhaustion(player.getExhaustion() + exhaustionAdd);
+						if (this.configuration.isDebugOn()) {
+							player.sendMessage("Current exhaustion: " + player.getExhaustion());
+						}
+					} else {
+						this.lastPlatformMap.remove(playerName);
+					}
+				} else {
+					player.sendMessage(this.plugin.getConfig().getString("message.too-high"));
+				}
+
+				int jumpEffectTime = this.plugin.getConfig().getInt("jump-effect.time");
+				if (this.configuration.isDebugOn()) {
+					player.sendMessage("time:" + jumpEffectTime);
+				}
+				int jumpEffectLevel = this.plugin.getConfig().getInt("jump-effect.level");
+				if (this.configuration.isDebugOn()) {
+					player.sendMessage("level:" + jumpEffectLevel);
+				}
+				PotionEffect jumpEffect = new PotionEffect(org.bukkit.potion.PotionEffectType.JUMP, jumpEffectTime,
+						jumpEffectLevel);
+
+				player.addPotionEffect(jumpEffect, true);
+			}
+
+		}
+
+	}
+
+	@EventHandler
+	public void onPlayerVelocityEvent(PlayerVelocityEvent event) {
+		if (event.getVelocity().getY() == 0) {
+			Platform platform = new Platform(event.getPlayer());
+			platform.setLastPlatformMap(this.lastPlatformMap);
+			platform.setPlatformMaterial(this.configuration.getPlatformMaterial());
+			platform.setDebugOn(this.configuration.isDebugOn());
+			if (platform.removeLast()) {
+				if (this.configuration.isDebugOn()) {
+					this.plugin.getLogger().info("Velocity:");
+					this.plugin.getLogger().info("X: " + event.getVelocity().getX());
+					this.plugin.getLogger().info("Y: " + event.getVelocity().getY());
+					this.plugin.getLogger().info("Z: " + event.getVelocity().getZ());
+				}
+
+			}
+		}
+	}
+}

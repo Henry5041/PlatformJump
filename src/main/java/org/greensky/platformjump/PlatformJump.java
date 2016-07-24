@@ -14,6 +14,32 @@ public class PlatformJump extends org.bukkit.plugin.java.JavaPlugin {
 	private Map<String, Block> lastPlatformMap = new HashMap<String, Block>();
 	private Configuration configuration;
 
+	public Configuration getConfiguration() {
+		return this.configuration;
+	}
+
+	public Map<String, Block> getLastPlatformMap() {
+		return this.lastPlatformMap;
+	}
+
+	public boolean getPluginEnabled(String playerName) {
+		if (!this.pluginEnabled.containsKey(playerName)) {
+			this.pluginEnabled.put(playerName, Boolean.valueOf(true));
+		}
+		return this.pluginEnabled.get(playerName).booleanValue();
+	}
+
+	@Override
+	public void onDisable() {
+
+		for (Player eachPlayer : org.bukkit.Bukkit.getServer().getOnlinePlayers()) {
+			if (this.lastPlatformMap.containsKey(eachPlayer.getName())) {
+				this.lastPlatformMap.get(eachPlayer.getName()).setType(Material.AIR);
+			}
+		}
+	}
+
+	@Override
 	public void onEnable() {
 		saveDefaultConfig();
 		this.configuration = new Configuration(getConfig());
@@ -31,26 +57,18 @@ public class PlatformJump extends org.bukkit.plugin.java.JavaPlugin {
 		}
 	}
 
-	public void onDisable() {
-
-		for (Player eachPlayer : org.bukkit.Bukkit.getServer().getOnlinePlayers()) {
-			if (this.lastPlatformMap.containsKey(eachPlayer.getName())) {
-				((Block) this.lastPlatformMap.get(eachPlayer.getName())).setType(Material.AIR);
-			}
-		}
+	public void setConfiguration(Configuration configuration) {
+		this.configuration = configuration;
 	}
 
-	public boolean getPluginEnabled(String playerName) {
-		if (!this.pluginEnabled.containsKey(playerName)) {
-			this.pluginEnabled.put(playerName, Boolean.valueOf(true));
-		}
-		return ((Boolean) this.pluginEnabled.get(playerName)).booleanValue();
+	public void setLastPlatformMap(Map<String, Block> lastPlatformMap) {
+		this.lastPlatformMap = lastPlatformMap;
 	}
 
 	public void togglePluginState(Player player) {
 		String playerName = player.getName();
 		if (this.pluginEnabled.containsKey(playerName)) {
-			if (((Boolean) this.pluginEnabled.get(playerName)).booleanValue()) {
+			if (this.pluginEnabled.get(playerName).booleanValue()) {
 				this.pluginEnabled.put(playerName, Boolean.valueOf(false));
 				player.sendMessage(getConfig().getString("message.toggle-off"));
 			} else {
@@ -62,22 +80,6 @@ public class PlatformJump extends org.bukkit.plugin.java.JavaPlugin {
 
 			player.sendMessage(getConfig().getString("message.toggle-on"));
 		}
-	}
-
-	public Map<String, Block> getLastPlatformMap() {
-		return this.lastPlatformMap;
-	}
-
-	public void setLastPlatformMap(Map<String, Block> lastPlatformMap) {
-		this.lastPlatformMap = lastPlatformMap;
-	}
-
-	public Configuration getConfiguration() {
-		return this.configuration;
-	}
-
-	public void setConfiguration(Configuration configuration) {
-		this.configuration = configuration;
 	}
 }
 
