@@ -3,6 +3,7 @@ package org.greensky.platformjump;
 import java.util.Map;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -10,13 +11,13 @@ public class Platform {
 	private Map<String, Block> lastPlatformMap;
 	private boolean isDebugOn;
 	private Player player;
-	private org.bukkit.Material platformMaterial;
+	private Material platformMaterial;
 
 	public Platform(Player player) {
 		this.player = player;
 		this.lastPlatformMap = null;
 		setDebugOn(false);
-		this.platformMaterial = org.bukkit.Material.GLASS;
+		this.platformMaterial = Material.GLASS;
 	}
 
 	/**
@@ -34,7 +35,7 @@ public class Platform {
 
 		Block platform = platformLocation.getBlock();
 
-		if (platform.getType() == org.bukkit.Material.AIR) {
+		if (platform.getType() == Material.AIR) {
 			platform.setType(this.platformMaterial);
 			if (this.lastPlatformMap != null) {
 				this.lastPlatformMap.put(playerName, platform);
@@ -60,7 +61,7 @@ public class Platform {
 		return this.lastPlatformMap;
 	}
 
-	public org.bukkit.Material getPlatformMaterial() {
+	public Material getPlatformMaterial() {
 		return this.platformMaterial;
 	}
 
@@ -73,7 +74,7 @@ public class Platform {
 		if ((this.lastPlatformMap != null) && (this.lastPlatformMap.containsKey(playerName))) {
 			Block lastPlatform = this.lastPlatformMap.get(playerName);
 			if (lastPlatform.getType() == this.platformMaterial) {
-				lastPlatform.setType(org.bukkit.Material.AIR);
+				lastPlatform.setType(Material.AIR);
 				// Remove the last platform block
 				this.lastPlatformMap.remove(playerName);
 				if (this.isDebugOn) {
@@ -93,7 +94,7 @@ public class Platform {
 		this.lastPlatformMap = lastPlatformMap;
 	}
 
-	public void setPlatformMaterial(org.bukkit.Material platformType) {
+	public void setPlatformMaterial(Material platformType) {
 		this.platformMaterial = platformType;
 	}
 }

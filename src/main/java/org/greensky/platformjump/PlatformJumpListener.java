@@ -2,6 +2,7 @@ package org.greensky.platformjump;
 
 import java.util.Map;
 
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,8 +14,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
-import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.potion.PotionEffect;
 
 public class PlatformJumpListener implements Listener {
@@ -99,6 +100,36 @@ public class PlatformJumpListener implements Listener {
 	}
 
 	@EventHandler
+	public void onPlayerChangedWorldEvent(PlayerChangedWorldEvent event) {
+		Player player = event.getPlayer();
+		if (this.plugin.getLastPlatformMap().containsKey(player.getName())) {
+			Location loc = this.plugin.getLastPlatformMap().get(player.getName()).getLocation();
+			loc.setWorld(event.getFrom());
+			loc.getBlock().setType(org.bukkit.Material.AIR);
+			this.plugin.getLastPlatformMap().remove(player.getName());
+		}
+		event.getFrom();
+	}
+	// @EventHandler
+	// public void onPlayerVelocityEvent(PlayerVelocityEvent event) {
+	// if (event.getVelocity().getY() == 0) {
+	// Platform platform = new Platform(event.getPlayer());
+	// platform.setLastPlatformMap(this.lastPlatformMap);
+	// platform.setPlatformMaterial(this.configuration.getPlatformMaterial());
+	// platform.setDebugOn(this.configuration.isDebugOn());
+	// if (platform.removeLast()) {
+	// if (this.configuration.isDebugOn()) {
+	// this.plugin.getLogger().info("Velocity:");
+	// this.plugin.getLogger().info("X: " + event.getVelocity().getX());
+	// this.plugin.getLogger().info("Y: " + event.getVelocity().getY());
+	// this.plugin.getLogger().info("Z: " + event.getVelocity().getZ());
+	// }
+	//
+	// }
+	// }
+	// }
+
+	@EventHandler
 	public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
 		Player player = event.getPlayer();
 
@@ -114,7 +145,7 @@ public class PlatformJumpListener implements Listener {
 					platform.setPlatformMaterial(this.configuration.getPlatformMaterial());
 					platform.setDebugOn(this.configuration.isDebugOn());
 					if (platform.createPlatform()) {
-						player.getWorld().playEffect(player.getLocation(), org.bukkit.Effect.ENDER_SIGNAL, null);
+						player.getWorld().playEffect(player.getLocation(), Effect.ENDER_SIGNAL, null);
 						float exhaustionAdd = (float) this.plugin.getConfig().getDouble("exhaustion");
 						player.setExhaustion(player.getExhaustion() + exhaustionAdd);
 						if (this.configuration.isDebugOn()) {
@@ -143,24 +174,5 @@ public class PlatformJumpListener implements Listener {
 
 		}
 
-	}
-
-	@EventHandler
-	public void onPlayerVelocityEvent(PlayerVelocityEvent event) {
-		if (event.getVelocity().getY() == 0) {
-			Platform platform = new Platform(event.getPlayer());
-			platform.setLastPlatformMap(this.lastPlatformMap);
-			platform.setPlatformMaterial(this.configuration.getPlatformMaterial());
-			platform.setDebugOn(this.configuration.isDebugOn());
-			if (platform.removeLast()) {
-				if (this.configuration.isDebugOn()) {
-					this.plugin.getLogger().info("Velocity:");
-					this.plugin.getLogger().info("X: " + event.getVelocity().getX());
-					this.plugin.getLogger().info("Y: " + event.getVelocity().getY());
-					this.plugin.getLogger().info("Z: " + event.getVelocity().getZ());
-				}
-
-			}
-		}
 	}
 }

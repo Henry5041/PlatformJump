@@ -1,9 +1,10 @@
 package org.greensky.platformjump;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class Configuration {
-	private org.bukkit.Material platformMaterial;
+	private Material platformMaterial;
 	private boolean isDebugOn;
 	private FileConfiguration config;
 

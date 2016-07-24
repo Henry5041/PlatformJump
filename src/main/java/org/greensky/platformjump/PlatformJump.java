@@ -7,6 +7,7 @@ import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 import org.mcstats.Metrics;
 
 public class PlatformJump extends org.bukkit.plugin.java.JavaPlugin {
@@ -55,6 +56,7 @@ public class PlatformJump extends org.bukkit.plugin.java.JavaPlugin {
 				getLogger().info("enable metrics failed");
 			}
 		}
+		BukkitTask task = new VelocityCheckTask(this).runTaskTimer(this, 20L, 20L);
 	}
 
 	public void setConfiguration(Configuration configuration) {
@@ -82,9 +84,3 @@ public class PlatformJump extends org.bukkit.plugin.java.JavaPlugin {
 		}
 	}
 }
-
-/*
- * Location: C:\Users\Henry
- * Hu\Documents\plugins\PlatformJump-0.2.0.jar!\org\greensky\platformjump\
- * PlatformJump.class Java compiler version: 7 (51.0) JD-Core Version: 0.7.1
- */
