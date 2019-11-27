@@ -1,6 +1,6 @@
 name: PlatformJump
 main: org.greensky.platformjump.PlatformJump
-version: 0.2.1
+version: 0.3.0
 author: Henry5041
 permissions:
     platform.*:

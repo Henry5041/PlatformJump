@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.greensky.platformjump.util.BukkitUtils;
 
 /**
  * @author Henry Hu
@@ -32,7 +33,7 @@ public class VelocityCheckTask extends BukkitRunnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		for (Player eachPlayer : org.bukkit.Bukkit.getServer().getOnlinePlayers()) {
+		for (Player eachPlayer : BukkitUtils.getOnlinePlayers()) {
 			if (eachPlayer.getVelocity().getY() <= 0 && eachPlayer.getVelocity().getY() > -0.08) {
 
 				if (this.plugin.getLastPlatformMap().containsKey(eachPlayer.getName())) {

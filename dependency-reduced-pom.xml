@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.greensky</groupId>
   <artifactId>PlatformJump</artifactId>
-  <version>0.2.0-SNAPSHOT</version>
+  <version>0.3.0-SNAPSHOT</version>
   <build>
     <plugins>
       <plugin>
@@ -15,7 +15,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>2.3</version>
+        <version>3.1.0</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -25,14 +25,9 @@
           </execution>
         </executions>
         <configuration>
-          <artifactSet>
-            <includes>
-              <include>org.mcstats.*:*</include>
-            </includes>
-          </artifactSet>
           <relocations>
             <relocation>
-              <pattern>org.mcstats</pattern>
+              <pattern>org.bstats</pattern>
               <shadedPattern>org.greensky.platformjump</shadedPattern>
             </relocation>
           </relocations>
@@ -46,24 +41,20 @@
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
     <repository>
-      <id>Plugin Metrics</id>
-      <url>http://repo.mcstats.org/content/repositories/public</url>
+      <id>CodeMC</id>
+      <url>https://repo.codemc.org/repository/maven-public</url>
     </repository>
   </repositories>
   <dependencies>
     <dependency>
-      <groupId>org.bukkit</groupId>
-      <artifactId>bukkit</artifactId>
-      <version>1.10.2-R0.1-SNAPSHOT</version>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
+      <version>1.14.4-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
           <artifactId>commons-lang</artifactId>
           <groupId>commons-lang</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>json-simple</artifactId>
-          <groupId>com.googlecode.json-simple</groupId>
         </exclusion>
         <exclusion>
           <artifactId>guava</artifactId>
@@ -74,20 +65,14 @@
           <groupId>com.google.code.gson</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>ebean</artifactId>
-          <groupId>org.avaje</groupId>
+          <artifactId>bungeecord-chat</artifactId>
+          <groupId>net.md-5</groupId>
         </exclusion>
         <exclusion>
           <artifactId>snakeyaml</artifactId>
           <groupId>org.yaml</groupId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>compile</scope>
     </dependency>
   </dependencies>
 </project>

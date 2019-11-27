@@ -21,4 +21,4 @@ message:
   removed: Last platform removed
   not-available: is not currently available
   not-player: You are not a player
-version: 0.2.1
+version: 0.3.0

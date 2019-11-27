@@ -1,14 +1,14 @@
 package org.greensky.platformjump;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
-import org.mcstats.Metrics;
+import org.greensky.platformjump.util.BukkitUtils;
 
 public class PlatformJump extends org.bukkit.plugin.java.JavaPlugin {
 	public Map<String, Boolean> pluginEnabled = new HashMap<String, Boolean>();
@@ -33,7 +33,7 @@ public class PlatformJump extends org.bukkit.plugin.java.JavaPlugin {
 	@Override
 	public void onDisable() {
 
-		for (Player eachPlayer : org.bukkit.Bukkit.getServer().getOnlinePlayers()) {
+		for (Player eachPlayer : BukkitUtils.getOnlinePlayers()) {
 			if (this.lastPlatformMap.containsKey(eachPlayer.getName())) {
 				this.lastPlatformMap.get(eachPlayer.getName()).setType(Material.AIR);
 			}
@@ -49,12 +49,7 @@ public class PlatformJump extends org.bukkit.plugin.java.JavaPlugin {
 		getCommand("platform").setExecutor(new PlatformJumpCommandExecutor(this));
 		getServer().getPluginManager().registerEvents(new PlatformJumpListener(this), this);
 		if (getConfig().getBoolean("metrics")) {
-			try {
-				Metrics metrics = new Metrics(this);
-				metrics.start();
-			} catch (IOException e) {
-				getLogger().info("enable metrics failed");
-			}
+			Metrics metrics = new Metrics(this);
 		}
 		BukkitTask task = new VelocityCheckTask(this).runTaskTimer(this, 20L, 20L);
 	}

@@ -2,6 +2,7 @@ package org.greensky.platformjump;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.greensky.platformjump.util.BukkitUtils;
 
 public class PlatformJumpCommandExecutor implements org.bukkit.command.CommandExecutor {
 	private final PlatformJump plugin;
@@ -21,7 +22,7 @@ public class PlatformJumpCommandExecutor implements org.bukkit.command.CommandEx
 		switch ((str)) {
 		case "reload":
 			if (sender.hasPermission("platform.command.reload")) {
-				for (Player eachPlayer : org.bukkit.Bukkit.getServer().getOnlinePlayers()) {
+				for (Player eachPlayer : BukkitUtils.getOnlinePlayers()) {
 
 					if (this.plugin.getLastPlatformMap().containsKey(eachPlayer.getName())) {
 						this.plugin.getLastPlatformMap().get(eachPlayer.getName()).setType(org.bukkit.Material.AIR);
@@ -57,7 +58,6 @@ public class PlatformJumpCommandExecutor implements org.bukkit.command.CommandEx
 				return true;
 			}
 			if (sender.hasPermission("platform.command.remove.others")) {
-				@SuppressWarnings("deprecation")
 				Player target = sender.getServer().getPlayer(args[1]);
 
 				if (target == null) {
