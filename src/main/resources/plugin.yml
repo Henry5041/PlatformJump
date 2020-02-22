@@ -1,58 +1,58 @@
 name: PlatformJump
 main: org.greensky.platformjump.PlatformJump
-version: 1.3.0
+version: 1.3.1
 author: Greensky
 permissions:
-    platform.*:
-        description: Allows you to use all platform feature
-        default: op
-        children:
-          platform.admin: true
-          platform.use: true
-    platform.use:
-        description: The basic feature of platform
-        default: false
-        children:
-          platform.create: true
-          platform.command.toggle: true
-          platform.command.remove.self: true
-    platform.admin:
-        description: The feature for administrators
-        default: op
-        children:
-          platform.command.*: true
-    platform.create:
-        description: Allows you to create platform
-        default: false
-    platform.command.*:
-        description: Allows you to use command
-        default: op
-        children:
-          platform.command.toggle: true
-          platform.command.reload: true
-          platform.command.remove.*: true
-    platform.command.toggle:
-        description: Allows you to use command toggle
-        default: false
-    platform.command.reload:
-        description: Allows you to use command reload
-        default: op
-    platform.command.remove.*:
-        description: Allows you to use command remove
-        default: op
-        children:
-          platform.command.remove.self: true
-          platform.command.remove.others: true
-    platform.command.remove.self:
-        description: Allows you to use command remove to yourself
-        default: false
-    platform.command.remove.others:
-        description: Allows you to use command remove to others
-        default: op
+  platform.*:
+    description: Allows you to use all platform feature
+    default: op
+    children:
+      platform.admin: true
+      platform.use: true
+  platform.use:
+    description: The basic feature of platform
+    default: false
+    children:
+      platform.create: true
+      platform.command.toggle: true
+      platform.command.remove.self: true
+  platform.admin:
+    description: The feature for administrators
+    default: op
+    children:
+      platform.command.*: true
+  platform.create:
+    description: Allows you to create platform
+    default: false
+  platform.command.*:
+    description: Allows you to use command
+    default: op
+    children:
+      platform.command.toggle: true
+      platform.command.reload: true
+      platform.command.remove.*: true
+  platform.command.toggle:
+    description: Allows you to use command toggle
+    default: false
+  platform.command.reload:
+    description: Allows you to use command reload
+    default: op
+  platform.command.remove.*:
+    description: Allows you to use command remove
+    default: op
+    children:
+      platform.command.remove.self: true
+      platform.command.remove.others: true
+  platform.command.remove.self:
+    description: Allows you to use command remove to yourself
+    default: false
+  platform.command.remove.others:
+    description: Allows you to use command remove to others
+    default: op
 commands:
-   platform:
-      description: This is the main command of PlatformJump.
-      usage: |
-        /<command> reload - reloads the configuration
-        /<command> toggle - Allows you to toggle enabled of platform
-        /<command> remove - Allows you to remove your last platform
+  platform:
+    description: This is the main command of PlatformJump.
+    usage: |-
+      /<command> reload - reloads the configuration
+      /<command> toggle - Allows you to toggle enabled of platform
+      /<command> remove - Allows you to remove your last platform

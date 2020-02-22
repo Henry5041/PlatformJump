@@ -35,7 +35,10 @@ public class Platform {
 
 		Block platform = platformLocation.getBlock();
 
-		if (platform.getType() == Material.AIR) {
+		if (platform.isEmpty()) {
+			if (this.isDebugOn) {
+				this.player.sendMessage("Previous block type: " + platform.getType().name());
+			}
 			platform.setType(this.platformMaterial);
 			if (this.lastPlatformMap != null) {
 				this.lastPlatformMap.put(playerName, platform);

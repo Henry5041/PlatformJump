@@ -11,8 +11,8 @@ import org.bukkit.scheduler.BukkitTask;
 import org.greensky.platformjump.util.BukkitUtils;
 
 public class PlatformJump extends org.bukkit.plugin.java.JavaPlugin {
-	public Map<String, Boolean> pluginEnabled = new HashMap<String, Boolean>();
-	private Map<String, Block> lastPlatformMap = new HashMap<String, Block>();
+	public Map<String, Boolean> pluginEnabled = new HashMap<>();
+	private Map<String, Block> lastPlatformMap = new HashMap<>();
 	private Configuration configuration;
 
 	public Configuration getConfiguration() {

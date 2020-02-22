@@ -110,24 +110,6 @@ public class PlatformJumpListener implements Listener {
 		}
 		event.getFrom();
 	}
-	// @EventHandler
-	// public void onPlayerVelocityEvent(PlayerVelocityEvent event) {
-	// if (event.getVelocity().getY() == 0) {
-	// Platform platform = new Platform(event.getPlayer());
-	// platform.setLastPlatformMap(this.lastPlatformMap);
-	// platform.setPlatformMaterial(this.configuration.getPlatformMaterial());
-	// platform.setDebugOn(this.configuration.isDebugOn());
-	// if (platform.removeLast()) {
-	// if (this.configuration.isDebugOn()) {
-	// this.plugin.getLogger().info("Velocity:");
-	// this.plugin.getLogger().info("X: " + event.getVelocity().getX());
-	// this.plugin.getLogger().info("Y: " + event.getVelocity().getY());
-	// this.plugin.getLogger().info("Z: " + event.getVelocity().getZ());
-	// }
-	//
-	// }
-	// }
-	// }
 
 	@EventHandler
 	public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
